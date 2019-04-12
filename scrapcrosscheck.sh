@@ -25,8 +25,7 @@
 USERNAME=aluque@gte.esi.us.es
 # Fill the initial page of the conference report here
 # Example: confreport="https://crosscheck.ieee.org/crosscheck/Report?id=1498197&Upages=0&pages=28&pagenum=1&sortcol=0"
-confreport="https://crosscheck.ieee.org/crosscheck/Report?id=1498197&Upages=0&pages=28&pagenum=1&sortcol=0"
-
+confreport="https://crosscheck.ieee.org/crosscheck/Report?id=1493036&Upages=1&pages=12&pagenum=1&sortcol=0"
 
 shopt -s expand_aliases
 alias goto="cat >/dev/null <<"
@@ -51,7 +50,6 @@ sleep 2
 
 echo "" > allreports.txt
 for p in $(seq 1 $numpages); do 
-    echo "Processing page $p of $numpages"
     if [ -f allreports-${p}.txt ]; then rm allreports-${p}.txt; fi
     thispage=`echo $confreport |perl -p -e 's/&pagenum=.*&sortcol/&pagenum='${p}'&sortcol/g'`
     echo -n "Getting page $p of $numpages ($thispage)..."
@@ -119,7 +117,10 @@ for p in $(seq 1 $numpages); do
         
     done
     
-    
+    # Relogging in after each page to avoid timeout
+    echo -n "Reolgging in to Crosscheck..."
+    curl -s -X POST -c cookiejar.txt "https://crosscheck.ieee.org/crosscheck/LoginServlet?username=$USERNAME&password=$PASSWD" >/dev/null
+    echo "done."
     
 done
 
