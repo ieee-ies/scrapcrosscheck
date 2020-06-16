@@ -22,17 +22,16 @@ page.open(ccurl, function(status) {
             return document.URL;
     });
     var cookies = page.cookies;
-  
+
     for(var i in cookies) {
         if(cookies[i].name=="ithenticate_session") { console.log(convurl+" "+cookies[i].value); }
         //console.log(cookies[i].name+" = "+cookies[i].value);
-    }    
+    }
     // We need to access the second page in order for iThenticate to believe we are authenticated
     var page2 = require('webpage').create();
         page2.open(convurl, function(status2) {
             page.render('doc.png');
             phantom.exit();
     });
-    
-});
 
+});
