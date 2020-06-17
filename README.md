@@ -1,8 +1,8 @@
-# scrapCrosscheck
+# scrapcrosscheck
 Scripts to scrap Crosscheck reports for a conference and download the reports for offline use.
 
 # Usage
-Run the the script `./scrapCrosscheck.sh`.
+Run the the script `./scrapcrosscheck.sh`.
 You will be asked for the Crosscheck URL, your IEEE login and password.
 
 The scripts will download only the flagged papers (indicated with a red color in the Crosscheck report and similarity index above the threshold).

@@ -80,10 +80,13 @@ for p in $(seq 1 $numpages); do
 
     # With phantom.js, obtain the equivalent URLs
     cat allithenticate-${p}.txt| while read u; do
-        if [[ "$u" == '' ]]; then
+        if [[ "$u" == '' ]]; then continue; fi
+        docpdf=$(echo $u |awk '{print $1}')
+        if [[ -f "$docpdf" ]]
+        then
+          echo "File $docpdf exists already locally and wont be re-downloaded. Delete the local copy to fetch it again."
           continue
         fi
-        docpdf=$(echo $u |awk '{print $1}')
         u1=$(echo $u |awk '{print $2}')
         echo -n "Now getting iThenticate real URL for $docpdf ($u1)..."
         ithresp=$(phantomjs ithenticate_url.js $u1|head -1)
@@ -99,7 +102,7 @@ for p in $(seq 1 $numpages); do
         docid=$(echo $ithurl| perl -ne '/o=([0123456789]*)/ && print $1')
         echo "The iThenticate document id for $docpdf is $docid"
         queueurl="https://api.ithenticate.com/paper/${docid}/queue_pdf?&lang=en_us&output=json"
-        echo -n "Adding report for $docpdf to the queue ($queueurl)..."
+        echo -n "Adding $docpdf to the queue ($queueurl)..."
         readyurl=$(curl -s -X POST -H "Content-Type: application/json" --data '{"as": 1, "or_type": "similarity"}' -b ithenticatecookie.txt "$queueurl" | jq '.url' |sed 's/"//g')
         if [ "$readyurl" = "" ]; then echo "Cannot add. Moving to next one."; continue; fi
         if [ "$readyurl" = "null" ]; then echo "Cannot add. Moving to next one."; continue; fi
